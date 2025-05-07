@@ -1,0 +1,78 @@
+name: Approval Pipeline
+run-name: "[Approval Pipeline] ${{ inputs.tag }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: Tag to deploy
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: npm ci && npm run build
+      - name: Save Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-result
+          path: out/
+
+  approve-dev:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    environment: review-dev
+    concurrency:
+      group: approve-dev
+      cancel-in-progress: true
+    needs: build
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Trigger Deployment
+        uses: ./.github/actions/trigger-deployment-pipeline
+        with:
+          tag: "${{ inputs.tag }}"
+          environment: dev
+          artifact_run_id: ${{ github.run_id }}
+
+  approve-staging:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    environment: review-staging
+    concurrency:
+      group: approve-staging
+      cancel-in-progress: true
+    needs: build
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Trigger Deployment
+        uses: ./.github/actions/trigger-deployment-pipeline
+        with:
+          tag: "${{ inputs.tag }}"
+          environment: staging
+          artifact_run_id: ${{ github.run_id }}
+
+  approve-live:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    environment: review-live
+    concurrency:
+      group: approve-live
+      cancel-in-progress: true
+    needs: build
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Trigger Deployment
+        uses: ./.github/actions/trigger-deployment-pipeline
+        with:
+          tag: "${{ inputs.tag }}"
+          environment: live
+          artifact_run_id: ${{ github.run_id }}

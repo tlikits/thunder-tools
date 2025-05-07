@@ -1,0 +1,52 @@
+name: Deployment Pipeline
+run-name: "[Deploy] ${{ inputs.tag }} to ${{ inputs.environment }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: Tag to deploy
+        type: string
+      environment:
+        required: true
+        description: Environment to deploy
+        default: dev
+        type: choice
+        options:
+          - dev
+          - staging
+          - live
+      artifact_run_id:
+        description: Not required if triggerd from Run Workflow
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: true
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        if: ${{ !inputs.artifact_run_id }}
+        run: npm ci && npm run build
+      - name: Download Build Artifact
+        if: ${{ inputs.artifact_run_id }}
+        uses: actions/download-artifact@v4
+        with:
+          name: build-result
+          path: out
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          channelId: ${{ inputs.environment }}
+          projectId: "${{vars.FIREBASE_PROJECT_ID}}"

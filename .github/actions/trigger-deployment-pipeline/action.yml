@@ -7,9 +7,12 @@ inputs:
   workflow_id:
     description: "Workflow that will be triggered"
     required: true
-  skip_dev:
+    default: "run-deployment-pipeline.yml"
+  environment:
     required: true
-    description: Skip deploy to dev environment
+    description: Environment to deploy
+  artifact_run_id:
+    description: Run ID to rertieve artifact from
 
 runs:
   using: "composite"
@@ -26,7 +29,8 @@ runs:
               ref: `refs/tags/${{ inputs.tag }}`,
               inputs: {
                 tag: `${{ inputs.tag }}`,
-                skip_dev: `${{ inputs.skip_dev }}`
+                environment: `${{ inputs.environment }}`,
+                artifact_run_id: `${{ inputs.artifact_run_id }}`,
               },
             })
             console.log(result);
