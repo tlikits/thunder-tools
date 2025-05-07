@@ -1,0 +1,33 @@
+name: "Trigger Deploy Workflow"
+description: "Trigger deploy workflow via workflow_dispatch as tagging with GITHUB_TOKEN prevent upcoming event in Github Workflow from being triggered"
+inputs:
+  tag:
+    description: "Tag for trigger"
+    required: true
+  workflow_id:
+    description: "Workflow that will be triggered"
+    required: true
+    default: "run-approval-pipeline.yml"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Trigger Tag Event
+      uses: actions/github-script@v5
+      with:
+        script: |
+          try {
+            const result = await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '${{ inputs.workflow_id }}',
+              ref: `refs/tags/${{ inputs.tag }}`,
+              inputs: {
+                tag: `${{ inputs.tag }}`,
+              },
+            })
+            console.log(result);
+          } catch(error) {
+            console.error(error);
+            core.setFailed(error);
+          }
