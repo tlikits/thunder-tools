@@ -1,0 +1,48 @@
+name: On Merge
+run-name: "[On Merge] ${{ github.event.head_commit.message }}"
+
+on:
+  push:
+    branches:
+      - main
+      - release/*
+
+jobs:
+  tag:
+    name: Tag New Version
+    runs-on: ubuntu-latest
+    permissions: write-all
+    concurrency:
+      group: version-tagging
+    environment: tag
+    outputs:
+      tag: ${{ steps.next_tag.outputs.tag }}
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Generate Next Tag
+        id: next_tag
+        uses: ./.github/actions/tag-generate
+      - name: Create tag
+        uses: ./.github/actions/tag-create
+        with:
+          tag: "${{ steps.next_tag.outputs.tag }}"
+
+  trigger_deployment:
+    name: Trigger Deployment Workflow
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: tag
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Log Trigger Deployment Version
+        shell: bash
+        run: |
+          echo "Trigger deployment on tag ${{ needs.tag.outputs.tag }}"
+      - name: Trigger Deployment
+        uses: ./.github/actions/trigger-deploy-workflow
+        with:
+          workflow_id: on-deploy.yml
+          tag: "${{ needs.tag.outputs.tag }}"
+          skip_dev: "${{ contains(github.ref, 'refs/heads/release/') }}"
