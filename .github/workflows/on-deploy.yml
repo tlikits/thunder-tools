@@ -2,10 +2,16 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy
-"on":
-  push:
-    branches:
-      - main
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: Tag to deploy
+        type: string
+      skip_dev:
+        required: true
+        description: Skip deploy to dev environment
 
 jobs:
   build:
