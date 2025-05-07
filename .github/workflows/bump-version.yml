@@ -1,0 +1,54 @@
+name: Bump Version
+run-name: "[Bump Version] Bump ${{ inputs.bump_level }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_level:
+        required: true
+        default: minor
+        type: choice
+        options:
+          - minor
+          - major
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions: write-all
+    concurrency:
+      group: bump-version
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Git Config
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            execSync('git config --global user.name "github-actions[bot]"');
+            execSync('git config --global user.email "github-actions[bot]@users.noreply.github.com"');
+
+      - name: Bump Version
+        id: bump_version
+        run: |
+          bump_level=${{ github.event.inputs.bump_level }}
+          if [ "$bump_level" == "minor" ]; then
+            npx npm version minor
+          elif [ "$bump_level" == "major" ]; then
+            npx npm version major
+          fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true

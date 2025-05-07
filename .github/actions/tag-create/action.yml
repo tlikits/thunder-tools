@@ -1,0 +1,20 @@
+name: "Create Tag"
+description: "Create Tag"
+inputs:
+  tag:
+    description: "The name of the tag that will be created"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create Tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/${{ inputs.tag }}',
+            sha: context.sha
+          })

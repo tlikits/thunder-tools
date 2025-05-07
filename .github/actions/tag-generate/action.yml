@@ -1,0 +1,61 @@
+name: "Get New Tag"
+description: "Calculate new version tag"
+outputs:
+  tag:
+    description: "The generated new version tag"
+    value: ${{ steps.get_latest_tag.outputs.tag }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Tag Prefix
+      id: get_tag_prefix
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+
+          // Read the package.json file
+          const packageJsonPath = path.join(process.env.GITHUB_WORKSPACE, 'package.json');
+          const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+
+          // Extract the version and get the prefix
+          const version = packageJson.version;
+          const prefix = version.split('.').slice(0, 2).join('.') + '.';
+
+          // Set outputs
+          core.setOutput('prefix', prefix);
+
+    - name: Get Latest Tag
+      id: get_latest_tag
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const prefix = `v${{ steps.get_tag_prefix.outputs.prefix }}`;
+          const tags = await github.paginate('GET /repos/{owner}/{repo}/tags', {
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          });
+
+          const filteredTags = tags
+            .map(tag => tag.name)
+            .filter(tag => tag.startsWith(prefix))
+            .sort((a, b) => {
+              const versionA = a.replace(prefix, '').split('.').map(Number);
+              const versionB = b.replace(prefix, '').split('.').map(Number);
+              for (let i = 0; i < Math.max(versionA.length, versionB.length); i++) {
+                if ((versionA[i] || 0) > (versionB[i] || 0)) return -1;
+                if ((versionA[i] || 0) < (versionB[i] || 0)) return 1;
+              }
+              return 0;
+            });
+
+          const latestExistTag = filteredTags[0] || '';
+          if (!latestExistTag) {
+            core.setOutput('tag', `${prefix}0`);
+            return;
+          }
+          const latestExistPatch = Number(latestExistTag.split('.')[2]);
+          const latestTag = `${prefix}${latestExistPatch + 1}`;
+          core.setOutput('tag', latestTag);
