@@ -26,7 +26,7 @@ jobs:
   approve-dev:
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: review-dev
+    environment: approve-dev
     concurrency:
       group: approve-dev
       cancel-in-progress: true
@@ -44,7 +44,7 @@ jobs:
   approve-staging:
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: review-staging
+    environment: approve-staging
     concurrency:
       group: approve-staging
       cancel-in-progress: true
@@ -62,7 +62,7 @@ jobs:
   approve-live:
     runs-on: ubuntu-latest
     permissions: write-all
-    environment: review-live
+    environment: approve-live
     concurrency:
       group: approve-live
       cancel-in-progress: true
