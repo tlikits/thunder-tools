@@ -30,11 +30,21 @@ runs:
         {
           "schemaVersion": 1,
           "label": "${{ inputs.environment }}",
-          "message": "${{ inputs.version }}",
-          "color": "${{ inputs.color }}"
+          "message": "${{ inputs.message }}",
+          "color": "${{ inputs.color }}",
           "namedLogo": "github"
         }
         EOF
+        cat badge.json
+
+    - name: Convert badge.json to string
+      id: stringify
+      shell: bash
+      run: |
+        json_string=$(cat badge.json | jq -r tostring)
+        escaped_json=$(sed 's/"/\\"/g' <<< "$json_string")
+        echo $escaped_json
+        echo "result=$escaped_json" >> $GITHUB_OUTPUT
 
     - name: Update Gist
       shell: bash
@@ -46,7 +56,7 @@ runs:
         {
           "files": {
             "${{ inputs.gist_name }}": {
-              "content": "$(cat badge.json)"
+              "content": "${{ steps.stringify.outputs.result }}"
             }
           }
         }

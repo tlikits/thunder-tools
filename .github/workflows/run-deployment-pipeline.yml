@@ -50,6 +50,18 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           channelId: ${{ inputs.environment }}
           projectId: "${{ vars.FIREBASE_PROJECT_ID }}"
+
+  update_badge:
+    name: "Update badge for ${{ inputs.environment }} to ${{ inputs.tag }}"
+    runs-on: ubuntu-latest
+    needs: deploy
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: update-badge-${{ inputs.environment }}
+      cancel-in-progress: true
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
       - name: Update Deployment Badge
         uses: ./.github/actions/update-deploy-badge
         with:
