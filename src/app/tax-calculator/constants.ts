@@ -1,3 +1,7 @@
+import {
+  ExtendedAutoCompleteOptions,
+  generateExtendedAutoCompleteOptions,
+} from "@/components/inputs/ExtendedAutoComplete";
 import { ITaxBracketOptions } from "./interface";
 
 export const SUPERANNUATION_RATE = 0.115;
@@ -18,10 +22,15 @@ export const TaxBracketOptions: ITaxBracketOptions = {
   },
 };
 
-export const VISA_TYPE_OPTIONS = ["462 - Work and Holiday Visa"];
+export const VISA_TYPE_OPTIONS: ExtendedAutoCompleteOptions = [
+  {
+    value: "462",
+    label: "462 - Work and Holiday Visa",
+  },
+];
 
 export const YearOptionsByVisaType: {
-  [year: string]: string[];
+  [year: string]: ExtendedAutoCompleteOptions;
 } = {
-  "462": ["2024", "2020"],
+  "462": generateExtendedAutoCompleteOptions(["2024", "2020"]),
 };

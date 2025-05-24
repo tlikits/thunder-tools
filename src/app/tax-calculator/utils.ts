@@ -1,3 +1,4 @@
+import { ExtendedAutoCompleteOptions } from "@/components/inputs/ExtendedAutoComplete";
 import {
   SUPERANNUATION_RATE,
   TaxBracketOptions,
@@ -5,7 +6,10 @@ import {
 } from "./constants";
 import { TaxBracket, TaxByRangeItem } from "./interface";
 
-export function calculateSuperannuation(income: number) {
+export function calculateSuperannuation(income: number, isInclude: boolean) {
+  if (!isInclude) {
+    return 0;
+  }
   return income * SUPERANNUATION_RATE;
 }
 
@@ -19,10 +23,25 @@ export function calculateBaseIncome(
   return income;
 }
 
+export function calculateTax(
+  taxableIncome: number,
+  visa: string,
+  year: string
+): {
+  taxByRange: TaxByRangeItem[];
+  totalTax: number;
+} {
+  const taxByRange = calculateTaxByRange(taxableIncome, visa, year);
+  const totalTax = taxByRange.reduce((total, item) => total + item.tax, 0);
+  return { taxByRange, totalTax };
+}
+
 export function calculateTaxByRange(
   income: number,
-  taxBracket: TaxBracket
+  visa: string,
+  year: string
 ): TaxByRangeItem[] {
+  const taxBracket = getTaxBracket(visa, year);
   let remainingIncome = income;
   const taxByRange: TaxByRangeItem[] = [];
 
@@ -59,6 +78,6 @@ export function getTaxBracket(visaType: string, year: string): TaxBracket {
 
 export function getYearAutocompleteOptionsByVisaType(
   visaType: string
-): string[] {
+): ExtendedAutoCompleteOptions {
   return YearOptionsByVisaType[visaType] ?? [];
 }
