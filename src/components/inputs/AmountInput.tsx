@@ -3,7 +3,7 @@
 import { formatNumber } from "@/lib/formatter";
 import { parseNumber, parseNumberCharacters } from "@/lib/parser";
 import { InputAdornment, inputBaseClasses, TextField } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 export default function AmountInput({
   label,
@@ -14,6 +14,7 @@ export default function AmountInput({
   value: number;
   onChange: (value: number) => Promise<void> | void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [currentValue, setCurrentValue] = useState(String(value));
   const [isFocused, setIsFocused] = useState(false);
 
@@ -26,6 +27,16 @@ export default function AmountInput({
   const handleFocusChange = (focused: boolean) => () => {
     setIsFocused(focused);
     setCurrentValue(String(value));
+    if (!focused) {
+      return;
+    }
+    setTimeout(() => {
+      const input = inputRef.current;
+      if (!input) return;
+
+      const adjustedIndex = String(value).length;
+      input.setSelectionRange(adjustedIndex, adjustedIndex);
+    }, 0);
   };
 
   const displayValue = useMemo(
@@ -41,8 +52,12 @@ export default function AmountInput({
     },
   };
 
+  // if (true) {
+  //   return <input
+  // }
   return (
     <TextField
+      inputRef={inputRef}
       label={label}
       type="text"
       variant="outlined"

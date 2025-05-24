@@ -4,10 +4,6 @@ inputs:
   tag:
     description: "Tag for trigger"
     required: true
-  workflow_id:
-    description: "Workflow that will be triggered"
-    required: true
-    default: "run-deployment-pipeline.yml"
   environment:
     required: true
     description: Environment to deploy
@@ -25,7 +21,7 @@ runs:
             const result = await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow_id: '${{ inputs.workflow_id }}',
+              workflow_id: 'run-deployment-pipeline.yml',
               ref: `refs/tags/${{ inputs.tag }}`,
               inputs: {
                 tag: `${{ inputs.tag }}`,

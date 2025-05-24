@@ -6,7 +6,7 @@ on:
     inputs:
       tag:
         required: true
-        description: Tag to deploy
+        description: Tag that being deployed
         type: string
       environment:
         required: true
@@ -49,4 +49,13 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           channelId: ${{ inputs.environment }}
-          projectId: "${{vars.FIREBASE_PROJECT_ID}}"
+          projectId: "${{ vars.FIREBASE_PROJECT_ID }}"
+      - name: Update Deployment Badge
+        uses: ./.github/actions/update-deploy-badge
+        with:
+          gist_id: ${{ secrets.BADGE_GIST_ID }}
+          gist_token: ${{ secrets.BADGE_GIST_TOKEN }}
+          gist_name: ${{ secrets.BADGE_GIST_NAME }}
+          message: ${{ inputs.tag }}
+          color: green
+          environment: ${{ inputs.environment }}
