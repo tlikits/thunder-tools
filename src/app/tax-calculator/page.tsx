@@ -22,7 +22,7 @@ export default function TaxCalculator() {
   const superannuation = calculateSuperannuation(income, isIncludeSuper);
   const taxableIncome = income - superannuation;
   const { taxByRange, totalTax } = calculateTax(taxableIncome, visa, year);
-  const netIncome = income - totalTax;
+  const netIncome = taxableIncome - totalTax;
 
   const handleOnTaxCalculatorFormChange = (
     newFormValues: TaxCalculatorFormValues
