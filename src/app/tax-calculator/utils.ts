@@ -1,4 +1,4 @@
-import { ExtendedAutoCompleteOptions } from "@/components/inputs/ExtendedAutoComplete";
+import { ExtendedAutoCompleteOptions } from "@/components/inputs/types";
 import {
   SUPERANNUATION_RATE,
   TaxBracketOptions,
