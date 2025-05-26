@@ -3,12 +3,12 @@
 </p>
 <p align="center">
   <a href="#" alt="Dev Environment Version">
-    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/87f14485cf78d4fb7f948931b9523de3/raw/thunder-tools-deployment-status-dev.json" />
+    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/0020668dab136d4a213c6496c8569d3b/raw/dev.json" />
   </a>
   <a href="#" alt="Staging Environment Version">
-    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/916e030b0d7b1e20c60e2c9c05e52fc1/raw/thunder-tools-deployment-status-staging.json" />
+    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/0020668dab136d4a213c6496c8569d3b/raw/staging.json" />
   </a>
   <a href="#" alt="Live Environment Version">
-    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/d16816ba7e032b7f4def955fd0efb678/raw/thunder-tools-deployment-status-live.json" />
+    <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tlikits/0020668dab136d4a213c6496c8569d3b/raw/live.json" />
   </a>
 </p>
