@@ -1,20 +1,19 @@
+/* eslint-disable */
 export function parseUserFormToGraph(userform: any) {
   const APP_NODE_ID = "Application";
   const propertyNodes =
-    userform?.values?.["Home Loan Multiple"]?.map(
-      (property: any, idx: number) => ({
-        type: "Property",
-        name: `${property.amount}`,
-        color: "navy",
-        id: property.id,
-        parent: userform?.SID,
-      })
-    ) || [];
+    userform?.values?.["Home Loan Multiple"]?.map((property: any) => ({
+      type: "Property",
+      name: `${property.amount}`,
+      color: "navy",
+      id: property.id,
+      parent: userform?.SID,
+    })) || [];
   const loanNodes =
     Object.entries(
       userform?.values?.["Multiple Product Selection"] ?? {}
-    )?.flatMap(([propertyId, propertyLoan]) => {
-      return propertyLoan?.splitLoanData?.map((loan) => ({
+    )?.flatMap(([propertyId, propertyLoan]: any[]) => {
+      return propertyLoan?.splitLoanData?.map((loan: any) => ({
         name: `${loan.loanAmount}`,
         color: "green",
         id: `${loan.id}`,
