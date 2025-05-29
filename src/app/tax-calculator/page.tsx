@@ -31,7 +31,7 @@ export default function TaxCalculator() {
   };
 
   return (
-    <Container className={styles.container}>
+    <Container sx={{ marginTop: 4 }}>
       <Card>
         <h1 className={styles.title}>Tax Calculator</h1>
         <Grid container spacing={4} paddingInline={6} paddingBlock={2}>
