@@ -2,22 +2,7 @@
 
 import { Autocomplete, TextField } from "@mui/material";
 import { useMemo } from "react";
-
-export interface ExtendedAutoCompleteOption {
-  label: string;
-  value: string;
-}
-
-export type ExtendedAutoCompleteOptions = ExtendedAutoCompleteOption[];
-
-export function generateExtendedAutoCompleteOptions(
-  options: string[]
-): ExtendedAutoCompleteOptions {
-  return options.map((option) => ({
-    label: option,
-    value: option,
-  }));
-}
+import { ExtendedAutoCompleteOptions } from "./types";
 
 export default function ExtendedAutoComplete({
   onChange,

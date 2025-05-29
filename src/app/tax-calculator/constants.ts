@@ -1,7 +1,5 @@
-import {
-  ExtendedAutoCompleteOptions,
-  generateExtendedAutoCompleteOptions,
-} from "@/components/inputs/ExtendedAutoComplete";
+import { ExtendedAutoCompleteOptions } from "@/components/inputs/types";
+import { generateExtendedAutoCompleteOptions } from "@/utils/mapper";
 import { ITaxBracketOptions } from "./interface";
 
 export const SUPERANNUATION_RATE = 0.115;
