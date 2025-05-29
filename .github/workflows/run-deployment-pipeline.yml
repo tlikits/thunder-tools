@@ -68,5 +68,5 @@ jobs:
           filename: "${{ inputs.environment }}.json"
           label: ${{ inputs.environment }}
           message: ${{ inputs.tag }}
-          color: green
+          color: brightgreen
           namedLogo: github
